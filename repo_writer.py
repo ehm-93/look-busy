@@ -6,11 +6,23 @@ import random
 
 
 class UnwritableError(Exception):
+    """An error to be raised in the event that a repository is not writable."""
     pass
 
 
 class GitRepoWriter:
+    """A class which can write commits to a Git repository and push them to the origin."""
+
     def __init__(self, path, dummy_file='.dummy_file', branch='dummy_branch'):
+        """Creates a new GitRepoWriter
+
+        :param path:
+            The path to the working-tree directory
+        :param dummy_file:
+            The dummy file which will be editted to generate the commits
+        :param branch:
+            The dummy branch which will have commits added
+        """
         import git
 
         self.repo = git.Repo(path)
@@ -18,6 +30,11 @@ class GitRepoWriter:
         self.branch = branch
 
     def write(self, commit_count):
+        """Write some commits to the dummy branch
+
+        :param commit_count:
+            The number of commits to write
+        """
         if commit_count < 1:
             return
 
@@ -47,6 +64,15 @@ class GitRepoWriter:
             self.write_commits(self.repo.index, commit_count, dummy_path)
 
     def write_commits(self, index, count, dummy_path):
+        """Creates commits on the passed index.
+
+        :param index:
+            The index to commit
+        :param count:
+            The number of commits to make
+        :param dummy_path:
+            The path to the dummy file to edit
+        """
         for _ in range(count):
             util.toggle_file(
                 dummy_path,
@@ -56,4 +82,5 @@ class GitRepoWriter:
             index.commit('Just looking busy')
 
     def push(self):
+        """Push any dummy commits to the origin remote"""
         self.repo.remote().push(self.branch + ':' + self.branch)
