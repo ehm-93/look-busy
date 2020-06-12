@@ -1,9 +1,11 @@
 #! /usr/bin/env python
 
+import configs
+import repo_writer
+import util
+
 if __name__ == '__main__':
     from sys import argv
-    from configs import InvalidConfig, from_yaml
-    from repo_writer import GitRepoWriter
     from random import normalvariate, choice
     from math import floor
 
@@ -15,14 +17,14 @@ if __name__ == '__main__':
     config_path = argv[1]
 
     with open(config_path) as f:
-        config = from_yaml(f)
+        config = configs.from_yaml(f)
 
     if config['repositories'] is None:
-        raise InvalidConfig()
+        raise configs.InvalidConfig()
 
     repo = choice(config['repositories'])
 
-    writer = GitRepoWriter(repo['path'])
+    writer = repo_writer.GitRepoWriter(repo['path'])
 
     reps = floor(normalvariate(int(argv[2]), int(argv[3])))
     if reps < 0:
